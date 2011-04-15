@@ -1,5 +1,16 @@
 class Rup
   VERSION = File.read( File.join(File.dirname(__FILE__),'..','VERSION') ).strip
+
+  def self.map(xxx, code)
+    xxx.readlines.each do |line|
+      result = line.instance_exec{ eval(code) }
+      if result == true
+        yield line
+      elsif result
+        yield result
+      end
+    end
+  end
 end
 
 class Object

@@ -31,24 +31,10 @@ reduce ||= options[:reduce]
 map = nil if map and map.empty?
 
 if map and not reduce
-  $stdin.readlines.each do |line|
-    result = line.instance_exec{ eval(map) }
-    if result == true
-      puts line
-    elsif result
-      puts result
-    end
-  end
+  Rup.map($stdin, map){|x| puts x }
 elsif map and reduce
   results = []
-  $stdin.readlines.each do |line|
-    result = line.instance_exec{ eval(map) }
-    if result == true
-      results << line
-    elsif result
-      results << result
-    end
-  end
+  Rup.map($stdin, map){|x| results << x }
   puts results.instance_exec{ eval(reduce) }
 elsif reduce
   puts $stdin.read.split("\n").instance_exec{ eval(reduce) }
