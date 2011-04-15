@@ -1,14 +1,12 @@
-task :default => :spec
-require "rspec/core/rake_task"
-RSpec::Core::RakeTask.new(:spec) do |t|
-  t.rspec_opts = '--backtrace --color'
+task :default do
+  sh "rspec spec/"
 end
 
 begin
   require 'jeweler'
   Jeweler::Tasks.new do |gem|
-    gem.name = 'rup'
-    gem.summary = "Ruby pipe helper"
+    gem.name = 'pru'
+    gem.summary = "Pipeable Ruby"
     gem.email = "michael@grosser.it"
     gem.homepage = "http://github.com/grosser/#{gem.name}"
     gem.authors = ["Michael Grosser"]

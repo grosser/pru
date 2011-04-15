@@ -1,4 +1,4 @@
-class Rup
+class Pru
   VERSION = File.read( File.join(File.dirname(__FILE__),'..','VERSION') ).strip
 
   def self.map(io, code)

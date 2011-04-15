@@ -3,12 +3,12 @@ require 'rubygems'
 require 'optparse'
 
 $LOAD_PATH << File.join(File.dirname(__FILE__), '..', 'lib')
-require 'rup'
+require 'pru'
 
 options = {}
 OptionParser.new do |opts|
   opts.banner = <<BANNER
-Ruby pipe helper
+Pipeable Ruby
 
 Use ruby in your pipes, forget about grep / sed / awk / wc ...
 
@@ -16,14 +16,14 @@ Map works on each line as String
 Reduce works on all lines as Array (optional or via -r)
 
 Usage:
-    something | rup 'map' ['reduce']
-    something | rup -r 'reduce'
+    something | pru 'map' ['reduce']
+    something | pru -r 'reduce'
 
 Options:
 BANNER
   opts.on("-r", "--reduce S","reduce via") {|s| options[:reduce] = s }
   opts.on("-h", "--help","Show this.") { puts opts; exit }
-  opts.on('-v', '--version','Show Version'){ puts Rup::VERSION; exit}
+  opts.on('-v', '--version','Show Version'){ puts Pru::VERSION; exit}
 end.parse!
 
 map, reduce = ARGV
@@ -31,11 +31,11 @@ reduce ||= options[:reduce]
 map = nil if map and map.empty?
 
 if map and not reduce
-  Rup.map($stdin, map){|x| puts x }
+  Pru.map($stdin, map){|x| puts x }
 elsif map and reduce
   results = []
-  Rup.map($stdin, map){|x| results << x }
-  puts Rup.reduce(results, reduce)
+  Pru.map($stdin, map){|x| results << x }
+  puts Pru.reduce(results, reduce)
 elsif reduce
-  puts Rup.reduce($stdin.read.split("\n"), reduce)
+  puts Pru.reduce($stdin.read.split("\n"), reduce)
 end
