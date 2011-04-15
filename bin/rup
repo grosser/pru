@@ -35,7 +35,7 @@ if map and not reduce
 elsif map and reduce
   results = []
   Rup.map($stdin, map){|x| results << x }
-  puts results.instance_exec{ eval(reduce) }
+  puts Rup.reduce(results, reduce)
 elsif reduce
-  puts $stdin.read.split("\n").instance_exec{ eval(reduce) }
+  puts Rup.reduce($stdin.read.split("\n"), reduce)
 end

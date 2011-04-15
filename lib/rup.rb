@@ -1,8 +1,8 @@
 class Rup
   VERSION = File.read( File.join(File.dirname(__FILE__),'..','VERSION') ).strip
 
-  def self.map(xxx, code)
-    xxx.readlines.each do |line|
+  def self.map(io, code)
+    io.readlines.each do |line|
       result = line.instance_exec{ eval(code) }
       if result == true
         yield line
@@ -10,6 +10,10 @@ class Rup
         yield result
       end
     end
+  end
+
+  def self.reduce(array, code)
+    array.instance_exec{ eval(code) }
   end
 end
 
