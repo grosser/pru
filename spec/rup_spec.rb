@@ -20,4 +20,8 @@ describe Rup do
   it "reduces" do
     `ls -l | ./bin/rup -r 'size'`.should == "10\n"
   end
+
+  it "can sum" do
+    `echo 5 | ./bin/rup -r 'sum(&:to_i)'`.should == "5\n"
+  end
 end
