@@ -24,4 +24,8 @@ describe Rup do
   it "can sum" do
     `echo 5 | ./bin/rup -r 'sum(&:to_i)'`.should == "5\n"
   end
+
+  it "can mean" do
+    `echo 5 | ./bin/rup -r 'mean(&:to_i)'`.should == "5.0\n"
+  end
 end

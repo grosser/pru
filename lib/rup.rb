@@ -59,3 +59,9 @@ class Array
     end
   end
 end
+
+class Array
+  def mean(method = nil, &block)
+    sum(method, &block) / size.to_f
+  end
+end
