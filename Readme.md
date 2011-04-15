@@ -30,11 +30,11 @@ A few simple examples.<br/>
 
     # awk --- return second work
     ls -al | awk '{print $2}'
-    ls -al | rup 'split(" ")[2]'
+    ls -al | rup 'split(" ")[1]'
 
     # awk --- count and average of all integers on second position
     ls -al | awk '{ s += $2; } END {print "average" ,int(s/NR);print "count ",int(NR)}'
-    ls -al | rup 'split(" ")[2]' '"average #{sum(&:to_i) / size}\ncount #{size}"'
+    ls -al | rup 'split(" ")[1]' '"average #{mean(&:to_i)}\ncount #{size}"'
 
     # wc --- count lines
     ls -al | wc -l
@@ -47,6 +47,6 @@ A few simple examples.<br/>
 
 Author
 ======
-[Michael Grosser](http://grosser.it)  
-grosser.michael@gmail.com  
+[Michael Grosser](http://grosser.it)<br/>
+michael@grosser.it<br/>
 Hereby placed under public domain, do what you want, just do not hold me accountable...
