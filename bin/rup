@@ -1,3 +1,55 @@
 #!/usr/bin/env ruby
-puts $stdin.read
-puts ARGV.inspect
+require 'rubygems'
+require 'optparse'
+
+$LOAD_PATH << File.join(File.dirname(__FILE__), '..', 'lib')
+require 'rup'
+
+options = {}
+OptionParser.new do |opts|
+  opts.banner = <<BANNER
+Ruby pipe helper
+
+Use ruby in your pipes, forget about grep / sed / awk / wc ...
+
+Map works on each line as String
+Reduce works on all lines as Array (optional or via -r)
+
+Usage:
+    something | rup 'map' ['reduce']
+    something | rup -r 'reduce'
+
+Options:
+BANNER
+  opts.on("-r", "--reduce S","reduce via") {|s| options[:reduce] = s }
+  opts.on("-h", "--help","Show this.") { puts opts; exit }
+  opts.on('-v', '--version','Show Version'){ puts Rup::VERSION; exit}
+end.parse!
+
+map, reduce = ARGV
+reduce ||= options[:reduce]
+map = nil if map and map.empty?
+
+if map and not reduce
+  $stdin.readlines.each do |line|
+    result = line.instance_exec{ eval(map) }
+    if result == true
+      puts line
+    elsif result
+      puts result
+    end
+  end
+elsif map and reduce
+  results = []
+  $stdin.readlines.each do |line|
+    result = line.instance_exec{ eval(map) }
+    if result == true
+      results << line
+    elsif result
+      results << result
+    end
+  end
+  puts results.instance_exec{ eval(reduce) }
+elsif reduce
+  puts $stdin.read.split("\n").instance_exec{ eval(reduce) }
+end
