@@ -24,6 +24,10 @@ A few simple examples.<br/>
     ls -al | grep foo
     ls -al | pru /foo/
 
+    # grep --- all lines including current date
+    ls -al | ???
+    ls -al | pru 'include?(Time.now.strftime("%Y-%m-%d"))'
+
     # grep --- all lines including foo but not self
     ps -ef | grep foo | grep -v grep
     ps -ef | pru 'include?("foo") and not include?("pru")'
@@ -43,6 +47,9 @@ A few simple examples.<br/>
     # sed -- replace a 5 with five
     ls -al | sed 's/5/five/'
     ls -al | pru 'gsub(/5/,"five")'
+
+    # every second line
+    ls -al | pru 'i % 2 == 0'
 
 
 Author

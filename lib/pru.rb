@@ -2,6 +2,7 @@ class Pru
   VERSION = File.read( File.join(File.dirname(__FILE__),'..','VERSION') ).strip
 
   def self.map(io, code)
+    i = 1
     io.readlines.each do |line|
       result = line.instance_exec{ eval(code) }
       if result == true
@@ -11,6 +12,7 @@ class Pru
       elsif result
         yield result
       end
+      i += 1
     end
   end
 

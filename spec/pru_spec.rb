@@ -17,6 +17,10 @@ describe Pru do
     `ls -l | ./bin/pru /G/`.split("\n").size.should == 2
   end
 
+  it "can selects via i" do
+    `ls -l | ./bin/pru 'i'`.split("\n")[0...3].should == ["1","2","3"]
+  end
+
   it "maps" do
     `echo abc | ./bin/pru 'gsub(/a/,"b")'`.should == "bbc\n"
   end
