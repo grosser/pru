@@ -4,6 +4,11 @@ Install
 =======
     sudo gem install pru
 
+Working with rvm / many gemsets -> only install once
+    rvm use 1.9.2
+    gem install pru
+    echo 'alias pru="rvm 1.9.2 exec pru"' >> ~/.bash_profile
+
 Usage
 =====
 pru supports mapping and reducing.<br/><br/>
