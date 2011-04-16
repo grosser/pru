@@ -1,9 +1,4 @@
-Pipeable Ruby
-
-Use ruby in your pipes, forget about grep / sed / awk / wc ...
-
-Sometimes pru is longer, but its easier to read/debug/refactor
-and you only need to know pure ruby.
+Pipeable Ruby - forget about grep / sed / awk / wc ... use pure, readable Ruby!
 
 Install
 =======
@@ -18,7 +13,7 @@ Reduce works on all lines as Array<br/>
     something | pru 'map' ['reduce']
     something | pru -r 'reduce'
 
-A few simple examples.<br/>
+### Examples
 
     # grep --- all lines including foo
     ls -al | grep foo
