@@ -6,6 +6,8 @@ class Pru
       result = line.instance_exec{ eval(code) }
       if result == true
         yield line
+      elsif result.is_a?(Regexp)
+        yield line if line =~ result
       elsif result
         yield result
       end

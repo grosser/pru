@@ -9,15 +9,23 @@ describe Pru do
     Pru::VERSION.should =~ /^\d+\.\d+\.\d+$/
   end
 
-  it "maps" do
+  it "selects" do
     `ls -l | ./bin/pru 'include?("G")'`.split("\n").size.should == 2
   end
 
-  it "maps and reduces" do
+  it "can selects via regex" do
+    `ls -l | ./bin/pru /G/`.split("\n").size.should == 2
+  end
+
+  it "maps" do
+    `echo abc | ./bin/pru 'gsub(/a/,"b")'`.should == "bbc\n"
+  end
+
+  it "selects and reduces" do
     `ls -l | ./bin/pru 'include?("G")' 'size'`.should == "2\n"
   end
 
-  it "maps with empty string and reduces" do
+  it "selects with empty string and reduces" do
     `ls -l | ./bin/pru '' 'size'`.should == @default
   end
 

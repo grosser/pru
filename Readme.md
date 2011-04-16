@@ -22,13 +22,13 @@ A few simple examples.<br/>
 
     # grep --- all lines including foo
     ls -al | grep foo
-    ls -al | pru 'include?("foo")'
+    ls -al | pru /foo/
 
-    # grep --- all lines including foo but not grep
+    # grep --- all lines including foo but not self
     ps -ef | grep foo | grep -v grep
     ps -ef | pru 'include?("foo") and not include?("pru")'
 
-    # awk --- return second work
+    # awk --- return second item
     ls -al | awk '{print $2}'
     ls -al | pru 'split(" ")[1]'
 
