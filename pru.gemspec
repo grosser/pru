@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{pru}
-  s.version = "0.1.1"
+  s.version = "0.1.2"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Michael Grosser"]
-  s.date = %q{2011-04-16}
+  s.date = %q{2011-04-18}
   s.default_executable = %q{pru}
   s.email = %q{michael@grosser.it}
   s.executables = ["pru"]
@@ -23,7 +23,8 @@ Gem::Specification.new do |s|
     "lib/pru.rb",
     "pru.gemspec",
     "spec/pru_spec.rb",
-    "spec/spec_helper.rb"
+    "spec/spec_helper.rb",
+    "spec/test.txt"
   ]
   s.homepage = %q{http://github.com/grosser/pru}
   s.require_paths = ["lib"]
