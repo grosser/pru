@@ -51,6 +51,11 @@ Reduce works on all lines as Array<br/>
     # every second line
     ls -al | pru 'i % 2 == 0'
 
+    # paste-friendly mime-types
+    curl https://github.com/mattetti/mimetype-fu/raw/master/lib/mime_types.yml | grep image | pru 'gsub(/(.*): (.*)/, %{"\\1" => "\\2",})'
+
+    # quotes inside a string
+    something | pru 'include?(%{"string"})'
 
 Author
 ======
