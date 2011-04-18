@@ -10,7 +10,7 @@ class Pru
 
     i = 1
     io.readlines.each do |line|
-      result = line._pru(i)
+      result = line[0..-2]._pru(i)
       if result == true
         yield line
       elsif result.is_a?(Regexp)
