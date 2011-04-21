@@ -10,8 +10,10 @@ class Pru
       end
     RUBY
 
-    io.readlines.each_with_index do |line, i|
-      result = line[0..-2]._pru(i+1)
+    i = 0
+    io.each_line do |line|
+      i += 1
+      result = line[0..-2]._pru(i)
       if result == true
         yield line
       elsif result.is_a?(Regexp)

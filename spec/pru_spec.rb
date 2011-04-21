@@ -33,6 +33,12 @@ describe Pru do
     it "can open preserves whitespaces" do
       `echo ' ab\tcd ' | ./bin/pru 'self'`.should == " ab\tcd \n"
     end
+
+    it "works with continuous input" do
+      results = `ruby -e 'STDOUT.sync = true; puts 1; sleep 2; puts 1' | ./bin/pru 'Time.now.to_i'`.split("\n")
+      results.size.should == 2
+      results.uniq.size.should == 2 # called at a different time -> parses as you go
+    end
   end
 
   describe 'reduce' do
