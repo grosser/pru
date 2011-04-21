@@ -23,7 +23,7 @@ describe Pru do
     end
 
     it "selects and reduces" do
-      `cat spec/test.txt | ./bin/pru 'include?("abc")' 'size'`.should == "2\n"
+      `cat spec/test.txt | ./bin/pru 'include?("abc")' 'size'`.should == "3\n"
     end
 
     it "can open files" do
@@ -50,6 +50,10 @@ describe Pru do
 
     it "can mean" do
       `cat spec/test.txt | ./bin/pru -r 'mean(&:to_i)'`.should == "242.4\n"
+    end
+
+    it "can grouped" do
+      `cat spec/test.txt | ./bin/pru -r 'grouped.map{|a,b| b.size }'`.should include("2\n")
     end
   end
 

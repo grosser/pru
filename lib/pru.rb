@@ -51,3 +51,9 @@ class Array
     sum(method, &block) / size.to_f
   end
 end
+
+class Array
+  def grouped
+    group_by{|x|x}
+  end
+end
