@@ -25,7 +25,7 @@ Reduce works on all lines as Array<br/>
     ls -al | pru /foo/
 
     # grep --- all lines including current date
-    ls -al | ???
+    ls -al | grep $(date +"%Y-%m-%d")
     ls -al | pru 'include?(Time.now.strftime("%Y-%m-%d"))'
 
     # grep --- all lines including foo but not self
