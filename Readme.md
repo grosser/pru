@@ -4,10 +4,9 @@ Install
 =======
     sudo gem install pru
 
-Working with rvm / many gemsets -> only install once
+Working with rvm / many gemsets -> only install once (1.9 recommended)
 
-    rvm use 1.9.2
-    gem install pru
+    rvm 1.9.2 exec gem install pru
     echo 'alias pru="rvm 1.9.2 exec pru"' >> ~/.bash_profile
 
 Usage
@@ -54,6 +53,9 @@ Reduce works on all lines as Array<br/>
 
     # paste-friendly mime-types
     curl https://github.com/mattetti/mimetype-fu/raw/master/lib/mime_types.yml | grep image | pru 'gsub(/(.*): (.*)/, %{"\\1" => "\\2",})'
+
+    # number of files by date:
+    ls -al | pru 'split(" ")[5]' 'grouped.map{|d, f| "#{d} : #{f.size}" }'
 
     # quotes inside a string
     something | pru 'include?(%{"string"})'
