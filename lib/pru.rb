@@ -15,13 +15,12 @@ class Pru
     io.each_line do |line|
       i += 1
       line.chomp!
-      result = line._pru(i)
-      if result == true
-        yield line
-      elsif result.is_a?(Regexp)
-        yield line if line =~ result
-      elsif result
-        yield result
+      result = line._pru(i) or next
+
+      case result
+      when true then yield line
+      when Regexp then yield line if line =~ result
+      else yield result
       end
     end
   end
