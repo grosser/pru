@@ -15,20 +15,23 @@ Map works on each line as String
 Reduce works on all lines as Array (optional or via -r)
 
 Usage:
-    something | pru 'map' ['reduce']
-    something | pru -r 'reduce'
+    something | pru 'map'
+    something | pru 'map' 'reduce'
+    something | pru '' 'reduce'
+    something | pru --reduce 'reduce'
 
 Options:
 BANNER
-  opts.on("-r", "--reduce CODE","reduce via") {|code| options[:reduce] = code }
-
+  opts.on("-r", "--reduce CODE","reduce via CODE") {|code| options[:reduce] = code }
+  opts.separator ''
   opts.on('-I', '--libdir DIR', 'Add DIR to load path') { |dir| $LOAD_PATH << dir }
   opts.on('--require LIB', 'Require LIB (also comma-separated)') { |lib| lib.split(',').each{|l| require l } }
-
+  opts.separator ''
   opts.on("-h", "--help","Show this.") { puts opts; exit }
   opts.on('-v', '--version','Show Version'){ puts Pru::VERSION; exit}
 end.parse!
 
+abort "Too many arguments, see --help" if ARGV.size > 2
 map, reduce = ARGV
 reduce ||= options[:reduce]
 map = 'true' if not map or map.empty?

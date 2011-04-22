@@ -15,8 +15,18 @@ pru supports mapping and reducing.<br/><br/>
 Map works on each line as String<br/>
 Reduce works on all lines as Array<br/>
 
-    something | pru 'map' ['reduce']
-    something | pru -r 'reduce'
+    something | pru 'map'
+    something | pru 'map' 'reduce'
+    something | pru '' 'reduce'
+    something | pru --reduce 'reduce'
+
+    -r, --reduce CODE                reduce via CODE
+
+    -I, --libdir DIR                 Add DIR to load path
+        --require LIB                Require LIB (also comma-separated)
+
+    -h, --help                       Show this.
+    -v, --version                    Show Version
 
 ### Examples
 
@@ -42,7 +52,7 @@ Reduce works on all lines as Array<br/>
 
     # wc --- count lines
     ls -al | wc -l
-    ls -al | pru -r 'size'
+    ls -al | pru --reuduce 'size'
 
     # sed -- replace a 5 with five
     ls -al | sed 's/5/five/'
