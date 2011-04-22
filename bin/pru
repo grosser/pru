@@ -37,5 +37,5 @@ elsif map and reduce
   Pru.map($stdin, map){|x| results << x }
   puts Pru.reduce(results, reduce)
 elsif reduce
-  puts Pru.reduce($stdin.read.split("\n"), reduce)
+  puts Pru.reduce($stdin.read.split($/), reduce)
 end

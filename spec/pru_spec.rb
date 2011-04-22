@@ -30,7 +30,7 @@ describe Pru do
       `echo spec/test.txt | ./bin/pru 'File.read(self)'`.should == File.read('spec/test.txt')
     end
 
-    it "can open preserves whitespaces" do
+    it "preserves whitespaces" do
       `echo ' ab\tcd ' | ./bin/pru 'self'`.should == " ab\tcd \n"
     end
 

@@ -14,7 +14,8 @@ class Pru
     i = 0
     io.each_line do |line|
       i += 1
-      result = line[0..-2]._pru(i)
+      line.chomp!
+      result = line._pru(i)
       if result == true
         yield line
       elsif result.is_a?(Regexp)
