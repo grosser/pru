@@ -74,4 +74,14 @@ describe Pru do
       `echo 1 | ./bin/pru -I spec --reduce 'require "a_test"; ATest.to_s'`.should == "ATest\n"
     end
   end
+
+  describe '--require' do
+    it "requires these libs" do
+      `echo 1 | ./bin/pru --require rake --reduce 'Rake.to_s'`.should == "Rake\n"
+    end
+
+    it "requires these libs comma-separated" do
+      `echo 1 | ./bin/pru --require jeweler,rake --reduce 'Rake.to_s + Jeweler.to_s'`.should == "RakeJeweler\n"
+    end
+  end
 end
