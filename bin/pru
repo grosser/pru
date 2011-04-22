@@ -1,5 +1,4 @@
 #!/usr/bin/env ruby
-require 'rubygems'
 require 'optparse'
 
 $LOAD_PATH << File.join(File.dirname(__FILE__), '..', 'lib')
@@ -21,7 +20,10 @@ Usage:
 
 Options:
 BANNER
-  opts.on("-r", "--reduce S","reduce via") {|s| options[:reduce] = s }
+  opts.on("-r", "--reduce CODE","reduce via") {|code| options[:reduce] = code }
+
+  opts.on('-I', '--libdir DIR', 'Add DIR to load path') { |dir| $LOAD_PATH << dir }
+
   opts.on("-h", "--help","Show this.") { puts opts; exit }
   opts.on('-v', '--version','Show Version'){ puts Pru::VERSION; exit}
 end.parse!

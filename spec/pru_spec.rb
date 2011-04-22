@@ -68,4 +68,10 @@ describe Pru do
       `cat spec/test.txt | ./bin/pru '' 'size'`.should == "5\n"
     end
   end
+
+  describe '-I / --libdir' do
+    it "adds a folder to the load-path" do
+      `echo 1 | ./bin/pru -I spec --reduce 'require "a_test"; ATest.to_s'`.should == "ATest\n"
+    end
+  end
 end
