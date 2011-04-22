@@ -1,5 +1,4 @@
 #!/usr/bin/env ruby
-require 'rubygems'
 require 'optparse'
 
 $LOAD_PATH << File.join(File.dirname(__FILE__), '..', 'lib')
@@ -16,26 +15,37 @@ Map works on each line as String
 Reduce works on all lines as Array (optional or via -r)
 
 Usage:
-    something | pru 'map' ['reduce']
-    something | pru -r 'reduce'
+    something | pru 'map'
+    something | pru 'map' 'reduce'
+    something | pru '' 'reduce'
+    something | pru --reduce 'reduce'
 
 Options:
 BANNER
-  opts.on("-r", "--reduce S","reduce via") {|s| options[:reduce] = s }
+  opts.on("-r", "--reduce CODE","reduce via CODE") {|code| options[:reduce] = code }
+  opts.separator ''
+  opts.on('-I', '--libdir DIR', 'Add DIR to load path') { |dir| $LOAD_PATH << dir }
+  opts.on('--require LIB', 'Require LIB (also comma-separated)') { |lib|
+    begin
+      require 'rubygems'
+    rescue LoadError
+    end
+    lib.split(',').each{|l| require l }
+  }
+  opts.separator ''
   opts.on("-h", "--help","Show this.") { puts opts; exit }
   opts.on('-v', '--version','Show Version'){ puts Pru::VERSION; exit}
 end.parse!
 
+abort "Too many arguments, see --help" if ARGV.size > 2
 map, reduce = ARGV
 reduce ||= options[:reduce]
-map = nil if map and map.empty?
+map = 'true' if not map or map.empty?
 
-if map and not reduce
-  Pru.map($stdin, map){|x| puts x }
-elsif map and reduce
+if reduce
   results = []
   Pru.map($stdin, map){|x| results << x }
   puts Pru.reduce(results, reduce)
-elsif reduce
-  puts Pru.reduce($stdin.read.split("\n"), reduce)
+else
+  Pru.map($stdin, map){|x| puts x }
 end

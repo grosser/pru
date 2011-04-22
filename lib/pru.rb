@@ -1,6 +1,7 @@
-require 'pru/core_ext'
+require 'pru/core_ext/array'
+require 'pru/core_ext/symbol'
 
-class Pru
+module Pru
   VERSION = File.read( File.join(File.dirname(__FILE__),'..','VERSION') ).strip
 
   def self.map(io, code)
@@ -10,14 +11,16 @@ class Pru
       end
     RUBY
 
-    io.readlines.each_with_index do |line, i|
-      result = line[0..-2]._pru(i+1)
-      if result == true
-        yield line
-      elsif result.is_a?(Regexp)
-        yield line if line =~ result
-      elsif result
-        yield result
+    i = 0
+    io.each_line do |line|
+      i += 1
+      line.chomp!
+      result = line._pru(i) or next
+
+      case result
+      when true then yield line
+      when Regexp then yield line if line =~ result
+      else yield result
       end
     end
   end

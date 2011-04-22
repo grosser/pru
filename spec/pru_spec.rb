@@ -30,8 +30,14 @@ describe Pru do
       `echo spec/test.txt | ./bin/pru 'File.read(self)'`.should == File.read('spec/test.txt')
     end
 
-    it "can open preserves whitespaces" do
+    it "preserves whitespaces" do
       `echo ' ab\tcd ' | ./bin/pru 'self'`.should == " ab\tcd \n"
+    end
+
+    it "works with continuous input" do
+      results = `ruby -e 'STDOUT.sync = true; puts 1; sleep 2; puts 1' | ./bin/pru 'Time.now.to_i'`.split("\n")
+      results.size.should == 2
+      results.uniq.size.should == 2 # called at a different time -> parses as you go
     end
   end
 
@@ -60,6 +66,22 @@ describe Pru do
   describe 'map and reduce' do
     it "selects with empty string and reduces" do
       `cat spec/test.txt | ./bin/pru '' 'size'`.should == "5\n"
+    end
+  end
+
+  describe '-I / --libdir' do
+    it "adds a folder to the load-path" do
+      `echo 1 | ./bin/pru -I spec --reduce 'require "a_test"; ATest.to_s'`.should == "ATest\n"
+    end
+  end
+
+  describe '--require' do
+    it "requires these libs" do
+      `echo 1 | ./bin/pru --require rake --reduce 'Rake.to_s'`.should == "Rake\n"
+    end
+
+    it "requires these libs comma-separated" do
+      `echo 1 | ./bin/pru --require jeweler,rake --reduce 'Rake.to_s + Jeweler.to_s'`.should == "RakeJeweler\n"
     end
   end
 end

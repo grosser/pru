@@ -1,5 +1,5 @@
-# http://madeofcode.com/posts/74-ruby-core-extension-array-sum
 class Array
+  # http://madeofcode.com/posts/74-ruby-core-extension-array-sum
   def sum(method = nil, &block)
     if block_given?
       raise ArgumentError, "You cannot pass a block and a method!" if method
@@ -9,13 +9,19 @@ class Array
     else
       inject(0) { |sum, i| sum + i }
     end
-  end
-  
+  end unless method_defined?(:sum)
+
   def mean(method = nil, &block)
     sum(method, &block) / size.to_f
-  end
+  end unless method_defined?(:mean)
 
   def grouped
-    group_by{|x|x}
-  end
+    group_by { |x| x }
+  end unless method_defined?(:grouped)
+
+  def group_by
+    hash = {}
+    each { |x| hash[yield(x)] = x }
+    hash
+  end unless method_defined?(:group_by)
 end
