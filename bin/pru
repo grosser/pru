@@ -25,7 +25,13 @@ BANNER
   opts.on("-r", "--reduce CODE","reduce via CODE") {|code| options[:reduce] = code }
   opts.separator ''
   opts.on('-I', '--libdir DIR', 'Add DIR to load path') { |dir| $LOAD_PATH << dir }
-  opts.on('--require LIB', 'Require LIB (also comma-separated)') { |lib| lib.split(',').each{|l| require l } }
+  opts.on('--require LIB', 'Require LIB (also comma-separated)') { |lib|
+    begin
+      require 'rubygems'
+    rescue LoadError
+    end
+    lib.split(',').each{|l| require l }
+  }
   opts.separator ''
   opts.on("-h", "--help","Show this.") { puts opts; exit }
   opts.on('-v', '--version','Show Version'){ puts Pru::VERSION; exit}
