@@ -75,6 +75,7 @@ Authors
 ### [Contributors](http://github.com/grosser/pru/contributors)
  - [John Hobbs](http://github.com/jmhobbs)
  - [Vasiliy Ermolovich](http://github.com/nashby)
+ - [Jens Wille](http://blackwinter.de)
 
 [Michael Grosser](http://grosser.it)<br/>
 michael@grosser.it<br/>
