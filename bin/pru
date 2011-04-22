@@ -31,14 +31,12 @@ end.parse!
 
 map, reduce = ARGV
 reduce ||= options[:reduce]
-map = nil if map and map.empty?
+map = 'true' if not map or map.empty?
 
-if map and not reduce
-  Pru.map($stdin, map){|x| puts x }
-elsif map and reduce
+if reduce
   results = []
   Pru.map($stdin, map){|x| results << x }
   puts Pru.reduce(results, reduce)
-elsif reduce
-  puts Pru.reduce($stdin.read.split($/), reduce)
+else
+  Pru.map($stdin, map){|x| puts x }
 end
