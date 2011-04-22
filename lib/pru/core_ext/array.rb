@@ -1,5 +1,4 @@
 class Array
-
   # http://madeofcode.com/posts/74-ruby-core-extension-array-sum
   def sum(method = nil, &block)
     if block_given?
@@ -25,13 +24,4 @@ class Array
     each { |x| hash[yield(x)] = x }
     hash
   end unless method_defined?(:group_by)
-
-end
-
-class Symbol
-
-  def to_proc
-    proc { |obj, *args| obj.send(self, *args) }
-  end unless method_defined?(:to_proc)
-
 end

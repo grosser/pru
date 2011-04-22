@@ -1,4 +1,5 @@
-require 'pru/core_ext'
+require 'pru/core_ext/array'
+require 'pru/core_ext/symbol'
 
 class Pru
   VERSION = File.read( File.join(File.dirname(__FILE__),'..','VERSION') ).strip
