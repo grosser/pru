@@ -70,6 +70,9 @@ Reduce works on all lines as Array<br/>
     # quotes inside a string
     something | pru 'include?(%{"string"})'
 
+    # Find a gem version matching a requirement e.g. ~> 1.0.0
+    curl http://rubygems.org/api/v1/versions/bundler | pru --require json 'JSON.parse(self).map{|g|g["number"]}.find{|v| Gem::Requirement.new("~>1.0.1").satisfied_by? Gem::Version.new(v) }'
+
 Authors
 =======
 ### [Contributors](http://github.com/grosser/pru/contributors)
