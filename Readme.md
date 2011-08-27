@@ -4,7 +4,7 @@ Install
 =======
     sudo gem install pru
 
-Working with rvm / many gemsets -> only install once (1.9 recommended)
+Working with rvm / many gemsets -> only install once
 
     rvm 1.9.2 exec gem install pru
     echo 'alias pru="rvm 1.9.2 exec pru"' >> ~/.bash_profile
@@ -24,6 +24,7 @@ Reduce works on all lines as Array<br/>
 
     -I, --libdir DIR                 Add DIR to load path
         --require LIB                Require LIB (also comma-separated)
+    -i, --inplace-edit FILE          Edit FILE inplace
 
     -h, --help                       Show this.
     -v, --version                    Show Version
@@ -52,7 +53,7 @@ Reduce works on all lines as Array<br/>
 
     # wc --- count lines
     ls -al | wc -l
-    ls -al | pru --reuduce 'size'
+    ls -al | pru --reduce 'size'
 
     # sed -- replace a 5 with five
     ls -al | sed 's/5/five/'
@@ -72,6 +73,9 @@ Reduce works on all lines as Array<br/>
 
     # Find a gem version matching a requirement e.g. ~> 1.0.0
     curl http://rubygems.org/api/v1/versions/bundler | pru --require json 'JSON.parse(self).map{|g|g["number"]}.find{|v| Gem::Requirement.new("~>1.0.1").satisfied_by? Gem::Version.new(v) }'
+
+    # Cleanup strange whitespace in a file
+    pru -i Rakefile 'gsub(/\r\n/,"\n").gsub(/\t/,"  ")'
 
 Authors
 =======
