@@ -55,21 +55,21 @@ map = 'true' if not map or map.empty?
 if options[:file]
   output_lines = []
   input = File.read(options[:file])
-  newline = input[/\r\n|\r|\n/] || "\n"
+  newline = input[/\r\n|\r|\n/]
 else
   input = $stdin
 end
 
-output = lambda{|line|
+collector = lambda{|line|
   output_lines ? output_lines << line : puts(line)
 }
 
 if reduce
   results = []
-  Pru.map(input, map){|usage| results << usage }
-  output.call Pru.reduce(results, reduce)
+  Pru.map(input, map){|out| results << out }
+  collector.call Pru.reduce(results, reduce)
 else
-  Pru.map(input, map){|usage| output.call usage }
+  Pru.map(input, map){|out| collector.call out }
 end
 
 if options[:file]
