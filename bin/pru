@@ -34,6 +34,7 @@ BANNER
     end
     lib.split(',').each{|l| require l }
   }
+  opts.on('-i', '--inplace-edit FILE', 'Edit FILE inplace') { |file| options[:file] = file }
   opts.separator ''
   opts.on("-h", "--help","Show this.") { puts opts; exit }
   opts.on('-v', '--version','Show Version'){ puts Pru::VERSION; exit}
@@ -51,10 +52,25 @@ map, reduce = ARGV
 reduce ||= options[:reduce]
 map = 'true' if not map or map.empty?
 
+if options[:file]
+  output_lines = []
+  input = File.read(options[:file])
+else
+  input = $stdin
+end
+
+output = lambda{|line|
+  output_lines ? output_lines << line : puts(line)
+}
+
 if reduce
   results = []
-  Pru.map($stdin, map){|usage| results << usage }
-  puts Pru.reduce(results, reduce)
+  Pru.map(input, map){|usage| results << usage }
+  output.call Pru.reduce(results, reduce)
 else
-  Pru.map($stdin, map){|usage| puts usage }
+  Pru.map(input, map){|usage| output.call usage }
+end
+
+if options[:file]
+  File.open(options[:file], 'w'){|f| f.write output_lines.join("\n") }
 end

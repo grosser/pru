@@ -88,4 +88,22 @@ describe Pru do
       `echo 1 | ./bin/pru --require jeweler,rake --reduce 'Rake.to_s + Jeweler.to_s'`.should == "RakeJeweler\n"
     end
   end
+
+  describe '--inplace-edit FILE' do
+    after do
+      `rm xxx`
+    end
+
+    it "modifies the file" do
+      File.open('xxx','w'){|f| f.write "abc\nab\na" }
+      `./bin/pru --inplace-edit xxx size`.should == ''
+      File.read('xxx').should == "3\n2\n1"
+    end
+
+    it "modifies the file with reduce" do
+      File.open('xxx','w'){|f| f.write "abc\nab\na" }
+      `./bin/pru --inplace-edit xxx size inspect`.should == ''
+      File.read('xxx').should == "[3, 2, 1]"
+    end
+  end
 end
