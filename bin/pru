@@ -55,6 +55,7 @@ map = 'true' if not map or map.empty?
 if options[:file]
   output_lines = []
   input = File.read(options[:file])
+  newline = input[/\r\n|\r|\n/] || "\n"
 else
   input = $stdin
 end
@@ -72,5 +73,5 @@ else
 end
 
 if options[:file]
-  File.open(options[:file], 'w'){|f| f.write output_lines.join("\n") }
+  File.open(options[:file], 'w'){|f| f.write output_lines.join(newline) }
 end

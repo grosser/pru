@@ -91,13 +91,23 @@ describe Pru do
 
   describe '--inplace-edit FILE' do
     after do
-      `rm xxx`
+      `rm -f xxx`
     end
 
     it "modifies the file" do
       File.open('xxx','w'){|f| f.write "abc\nab\na" }
       `./bin/pru --inplace-edit xxx size`.should == ''
       File.read('xxx').should == "3\n2\n1"
+    end
+
+    it "fails with empty file" do
+      `./bin/pru --inplace-edit xxx size 2>&1`.should include('No such file or directory - xxx')
+    end
+
+    it "keeps line separators when modifying" do
+      File.open('xxx','w'){|f| f.write "abc\r\nab\r\na" }
+      `./bin/pru --inplace-edit xxx size`.should == ''
+      File.read('xxx').should == "3\r\n2\r\n1"
     end
 
     it "modifies the file with reduce" do
