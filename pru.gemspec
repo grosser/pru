@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{pru}
-  s.version = "0.1.5"
+  s.version = "0.1.6"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Michael Grosser"]
-  s.date = %q{2011-04-22}
+  s.date = %q{2011-08-27}
   s.default_executable = %q{pru}
   s.email = %q{michael@grosser.it}
   s.executables = ["pru"]
@@ -31,7 +31,7 @@ Gem::Specification.new do |s|
   ]
   s.homepage = %q{http://github.com/grosser/pru}
   s.require_paths = ["lib"]
-  s.rubygems_version = %q{1.4.2}
+  s.rubygems_version = %q{1.6.2}
   s.summary = %q{Pipeable Ruby - forget about grep / sed / awk / wc ... use pure, readable Ruby!}
   s.test_files = [
     "spec/a_test.rb",
