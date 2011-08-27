@@ -5,6 +5,10 @@ describe Pru do
     Pru::VERSION.should =~ /^\d+\.\d+\.\d+$/
   end
 
+  it "shows help when no arguments are given" do
+    `./bin/pru`.should include('Usage:')
+  end
+
   describe 'map' do
     it "selects" do
       `ls -l | ./bin/pru 'include?("G")'`.split("\n").size.should == 2

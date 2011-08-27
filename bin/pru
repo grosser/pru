@@ -4,7 +4,9 @@ require 'optparse'
 $LOAD_PATH << File.join(File.dirname(__FILE__), '..', 'lib')
 require 'pru'
 
+usage = nil
 options = {}
+
 OptionParser.new do |opts|
   opts.banner = <<BANNER
 Pipeable Ruby
@@ -35,17 +37,24 @@ BANNER
   opts.separator ''
   opts.on("-h", "--help","Show this.") { puts opts; exit }
   opts.on('-v', '--version','Show Version'){ puts Pru::VERSION; exit}
+  usage = opts
 end.parse!
 
+if ARGV.empty? and options.empty? # no arguments -> show usage
+  puts usage
+  exit
+end
+
 abort "Too many arguments, see --help" if ARGV.size > 2
+
 map, reduce = ARGV
 reduce ||= options[:reduce]
 map = 'true' if not map or map.empty?
 
 if reduce
   results = []
-  Pru.map($stdin, map){|x| results << x }
+  Pru.map($stdin, map){|usage| results << usage }
   puts Pru.reduce(results, reduce)
 else
-  Pru.map($stdin, map){|x| puts x }
+  Pru.map($stdin, map){|usage| puts usage }
 end
