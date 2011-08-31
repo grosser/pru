@@ -11,11 +11,9 @@ module Pru
       end
     RUBY
 
-    i = 0
-    io.each_line do |line|
-      i += 1
+    io.each_line.with_index do |line, i|
       line.chomp!
-      result = line._pru(i) or next
+      result = line._pru(i+1) or next
 
       case result
       when true then yield line
