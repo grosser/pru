@@ -43,6 +43,11 @@ describe Pru do
       results.size.should == 2
       results.uniq.size.should == 2 # called at a different time -> parses as you go
     end
+
+    it "can be cut of via head" do
+      `ls -l | ./bin/pru size | head -1 2>&1`.should == "8\n"
+      $?.success?.should == true
+    end
   end
 
   describe 'reduce' do
@@ -64,6 +69,11 @@ describe Pru do
 
     it "can grouped" do
       `cat spec/test.txt | ./bin/pru -r 'grouped.map{|a,b| b.size }'`.should include("2\n")
+    end
+
+    it "can be cut of via head" do
+      `ls -l | ./bin/pru size 'map{|x|x}' | head -n 3 2>&1`.should == "8\n"
+      $?.success?.should == true
     end
   end
 
