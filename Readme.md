@@ -74,6 +74,9 @@ Reduce works on all lines as Array<br/>
     # Find a gem version matching a requirement e.g. ~> 1.0.0
     curl http://rubygems.org/api/v1/versions/bundler | pru --require json 'JSON.parse(self).map{|g|g["number"]}.find{|v| Gem::Requirement.new("~>1.0.1").satisfied_by? Gem::Version.new(v) }'
 
+    # List your local repos by watchers
+    ls | pru '[self, `curl --silent "https://github.com/grosser/#{self}"`.match(/<li class="watchers.*?(\d+)\s*<\/a/m)[1].to_i] rescue nil' 'sort_by(&:last).reverse.map{|n,i| "#{n} => #{i}" }'
+
     # Cleanup strange whitespace in a file
     pru -i Rakefile 'gsub(/\r\n/,"\n").gsub(/\t/,"  ")'
 
