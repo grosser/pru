@@ -63,7 +63,7 @@ Reduce works on all lines as Array<br/>
     ls -al | pru 'i % 2 == 0'
 
     # paste-friendly mime-types
-    curl https://github.com/mattetti/mimetype-fu/raw/master/lib/mime_types.yml | grep image | pru 'gsub(/(.*): (.*)/, %{"\\1" => "\\2",})'
+    curl https://raw.github.com/mattetti/mimetype-fu/master/lib/mime_types.yml | grep image | pru 'gsub(/(.*): (.*)/, %{"\\1" => "\\2",})'
 
     # number of files by date:
     ls -al | pru 'split(" ")[5]' 'grouped.map{|d, f| "#{d} : #{f.size}" }'
