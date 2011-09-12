@@ -21,10 +21,10 @@ Map works on each line as String.
 
     # count letters of each line
     ls -1 | pru size
-    
+
     # select lines longer than five letters
     ls -1 | pru 'size > 5'
-    
+
     # passthrough
     ls -1 | pru self
 
@@ -40,7 +40,7 @@ Reduce works on all lines as Array.
 
     # count lines
     ls -1 | pru -r size
-    
+
     # are the more than five lines?
     ls -1 | pru -r 'size > 5'
 
@@ -57,7 +57,7 @@ Reduce works on all lines as Array.
 
     # count letters in each line, then sum
     ls -1 | pru size sum
-    
+
     # select lines longer than 5 letters, then join with commas
     ls -1 | pru 'size > 5' 'join(",")'
 
@@ -67,7 +67,7 @@ Reduce works on all lines as Array.
 
 Usage
 =====
-   
+
     something | pru <map>
     something | pru <map> <reduce>
     something | pru -r <reduce>
@@ -147,6 +147,7 @@ Authors
  - [John Hobbs](http://github.com/jmhobbs)
  - [Vasiliy Ermolovich](http://github.com/nashby)
  - [Jens Wille](http://blackwinter.de)
+ - [SixArm](https://github.com/SixArm)
 
 [Michael Grosser](http://grosser.it)<br/>
 michael@grosser.it<br/>
