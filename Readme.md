@@ -4,21 +4,76 @@ Install
 =======
     sudo gem install pru
 
-Working with rvm / many gemsets -> only install once
 
-    rvm 1.9.2 exec gem install pru
-    echo 'alias pru="rvm 1.9.2 exec pru"' >> ~/.bash_profile
+Introduction
+============
+pru works on input lines and offers easy mapping and reducing.
+
+
+## Map
+
+Map works on each line as String.
+
+    something | pru <map>
+
+
+### Examples
+
+    # count letters of each line
+    ls -1 | pru size
+    
+    # select lines longer than five letters
+    ls -1 | pru 'size > 5'
+    
+    # passthrough
+    ls -1 | pru self
+
+
+## Reduce
+
+Reduce works on all lines as Array.
+
+    something | pru -r <reduce>
+    something | pru --reduce <reduce>
+
+### Examples
+
+    # count lines
+    ls -1 | pru -r size
+    
+    # are the more than five lines?
+    ls -1 | pru -r 'size > 5'
+
+    # passthrough
+    ls -1 | pru -r self
+
+
+## Map and Reduce
+
+    something | pru <map> <reduce>
+
+
+### Examples
+
+    # count letters in each line, then sum
+    ls -1 | pru size sum
+    
+    # select lines longer than 5 letters, then join with commas
+    ls -1 | pru 'size > 5' 'join(",")'
+
+    # passthrough
+    ls -1 | pru self self
+
 
 Usage
 =====
-pru supports mapping and reducing.<br/><br/>
-Map works on each line as String<br/>
-Reduce works on all lines as Array<br/>
+   
+    something | pru <map>
+    something | pru <map> <reduce>
+    something | pru -r <reduce>
+    something | pru --reduce <reduce>
 
-    something | pru 'map'
-    something | pru 'map' 'reduce'
-    something | pru '' 'reduce'
-    something | pru --reduce 'reduce'
+## Options
 
     -r, --reduce CODE                reduce via CODE
 
@@ -29,6 +84,7 @@ Reduce works on all lines as Array<br/>
     -h, --help                       Show this.
     -v, --version                    Show Version
 
+
 ### Examples
 
     # grep --- all lines including foo
@@ -38,10 +94,6 @@ Reduce works on all lines as Array<br/>
     # grep --- all lines including current date
     ls -al | grep $(date +"%Y-%m-%d")
     ls -al | pru 'include?(Time.now.strftime("%Y-%m-%d"))'
-
-    # grep --- all lines including foo but not self
-    ps -ef | grep foo | grep -v grep
-    ps -ef | pru 'include?("foo") and not include?("pru")'
 
     # awk --- return second item
     ls -al | awk '{print $2}'
@@ -79,6 +131,15 @@ Reduce works on all lines as Array<br/>
 
     # Cleanup strange whitespace in a file
     pru -i Rakefile 'gsub(/\r\n/,"\n").gsub(/\t/,"  ")'
+
+
+Gemsets
+=======
+Working with rvm / many gemsets -> only install once
+
+    rvm 1.9.2 exec gem install pru
+    echo 'alias pru="rvm 1.9.2 exec pru"' >> ~/.bash_profile
+
 
 Authors
 =======
