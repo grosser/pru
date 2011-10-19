@@ -70,6 +70,7 @@ Usage
 
     something | pru <map>
     something | pru <map> <reduce>
+    something | pru '' <reduce>
     something | pru -r <reduce>
     something | pru --reduce <reduce>
 

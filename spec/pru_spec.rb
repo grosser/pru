@@ -14,11 +14,11 @@ describe Pru do
       `ls -l | ./bin/pru 'include?("G")'`.split("\n").size.should == 2
     end
 
-    it "can selects via regex" do
+    it "can select via regex" do
       `ls -l | ./bin/pru /G/`.split("\n").size.should == 2
     end
 
-    it "can selects via i" do
+    it "can select via i" do
       `cat spec/test.txt | ./bin/pru 'i'`.split("\n")[0...3].should == ["1","2","3"]
     end
 
@@ -34,8 +34,16 @@ describe Pru do
       `echo spec/test.txt | ./bin/pru 'File.read(self)'`.should == File.read('spec/test.txt')
     end
 
+    it "pipes via self" do
+      `echo 'abcd' | ./bin/pru self`.should == "abcd\n"
+    end
+
+    it "pipes via ''" do
+      `echo 'abcd' | ./bin/pru ''`.should == "abcd\n"
+    end
+
     it "preserves whitespaces" do
-      `echo ' ab\tcd ' | ./bin/pru 'self'`.should == " ab\tcd \n"
+      `echo ' ab\tcd ' | ./bin/pru self`.should == " ab\tcd \n"
     end
 
     it "works with continuous input" do
