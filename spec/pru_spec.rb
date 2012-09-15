@@ -80,7 +80,7 @@ describe Pru do
     end
 
     it "can be cut of via head" do
-      `ls -l | ./bin/pru size 'map{|x|x}' | head -n 3 2>&1`.should == "8\n50\n54\n"
+      `ls -l | ./bin/pru size 'map{|x| x > 30 ? 30 : x}' | head -n 3 2>&1`.should == "8\n30\n30\n"
       $?.success?.should == true
     end
   end
