@@ -133,6 +133,9 @@ Usage
     # Cleanup strange whitespace in a file
     pru -i Rakefile 'gsub(/\r\n/,"\n").gsub(/\t/,"  ")'
 
+    # Removing certain lines from output vs ruby -npe
+    ls -al | ruby -npe 'next unless $_.split(" ")[1].to_i > 3'
+    ls -al | pru 'split(" ")[1].to_i > 3'
 
 Gemsets
 =======
