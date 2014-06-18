@@ -37,7 +37,7 @@ BANNER
   opts.on('-i', '--inplace-edit FILE', 'Edit FILE inplace') { |file| options[:file] = file }
   opts.separator ''
   opts.on("-h", "--help","Show this.") { puts opts; exit }
-  opts.on('-v', '--version','Show Version'){ puts Pru::VERSION; exit}
+  opts.on('-v', '--version','Show Version'){ require 'pru/version'; puts Pru::VERSION; exit}
   usage = opts
 end.parse!
 

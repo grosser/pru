@@ -95,6 +95,10 @@ describe Pru do
     end
   end
 
+  it 'shows -v' do
+    `./bin/pru -v`.should == "#{Pru::VERSION}\n"
+  end
+
   describe '-I / --libdir' do
     it "adds a folder to the load-path" do
       `echo 1 | ./bin/pru -I spec --reduce 'require "a_test"; ATest.to_s'`.should == "ATest\n"
