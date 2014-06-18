@@ -119,7 +119,8 @@ Usage
     curl https://raw.github.com/mattetti/mimetype-fu/master/lib/mime_types.yml | grep image | pru 'gsub(/(.*): (.*)/, %{"\\1" => "\\2",})'
 
     # number of files by date:
-    ls -al | pru 'split(" ")[5]' 'grouped.map{|d, f| "#{d} : #{f.size}" }'
+    ls -al | pru 'split(" ")[5]' 'grouped.sort_by{|d, f| -1 * f.size }.map{|d, f| "#{d} : #{f.size}" }'
+    ls -al | pru 'split(" ")[5]' 'counted'
 
     # quotes inside a string
     something | pru 'include?(%{"string"})'
