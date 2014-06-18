@@ -103,7 +103,7 @@ describe Pru do
     end
 
     it "requires these libs comma-separated" do
-      `echo 1 | ./bin/pru --require jeweler,rake --reduce 'Rake.to_s + Jeweler.to_s'`.should == "RakeJeweler\n"
+      `echo 1 | ./bin/pru --require bump,rake --reduce 'Rake.to_s + Bump.to_s'`.should == "RakeBump\n"
     end
   end
 
@@ -119,7 +119,7 @@ describe Pru do
     end
 
     it "fails with empty file" do
-      `./bin/pru --inplace-edit xxx size 2>&1`.should include('No such file or directory - xxx')
+      `./bin/pru --inplace-edit xxx size 2>&1`.sub(' @ rb_sysopen', '').should include('No such file or directory - xxx')
     end
 
     it "keeps line separators when modifying" do

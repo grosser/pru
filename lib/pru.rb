@@ -2,8 +2,6 @@ require 'pru/core_ext/array'
 require 'pru/core_ext/symbol'
 
 module Pru
-  VERSION = File.read( File.join(File.dirname(__FILE__),'..','VERSION') ).strip
-
   def self.map(io, code)
     String.class_eval <<-RUBY, __FILE__, __LINE__ + 1
       def _pru(i)

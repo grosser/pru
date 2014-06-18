@@ -1,2 +1,2 @@
-$LOAD_PATH.unshift 'lib'
 require 'pru'
+require 'pru/version'
