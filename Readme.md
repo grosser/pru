@@ -2,7 +2,16 @@ Pipeable Ruby - forget about grep / sed / awk / wc ... use pure, readable Ruby!
 
 Install
 =======
-    sudo gem install pru
+
+```Bash
+gem install pru
+```
+
+or standalone
+```Bash
+curl https://rubinjam.herokuapp.com/pack/pru > pru && chmod +x pru
+./pru -v
+```
 
 
 Introduction
@@ -141,6 +150,7 @@ Usage
 Gemsets
 =======
 Working with rvm / many gemsets -> only install once
+(or use standalone binary)
 
     rvm 1.9.2 exec gem install pru
     echo 'alias pru="rvm 1.9.2 exec pru"' >> ~/.bash_profile
