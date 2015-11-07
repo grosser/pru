@@ -83,8 +83,13 @@ describe Pru do
       `cat spec/test.txt | ./bin/pru -r 'counted'`.should == "abc : 2\n12 : 1\nabcdef : 1\n1200 : 1\n"
     end
 
-    it "can be cut of via head" do
+    it "can be cut ofg via head" do
       `ls -l | ./bin/pru size 'map{|x| x > 30 ? 30 : x}' | head -n 3 2>&1`.should == "8\n30\n30\n"
+      $?.success?.should == true
+    end
+
+    it "can cut big items off via head" do
+      `ls -l | ./bin/pru size '"1\n" * 10' | head -n 3 2>&1`.should == "1\n1\n1\n"
       $?.success?.should == true
     end
   end
