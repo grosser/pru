@@ -1,32 +1,6 @@
 Pipeable Ruby - forget about grep / sed / awk / wc ... use pure, readable Ruby!
 
-Install
-=======
-
-```Bash
-gem install pru
-```
-
-or standalone
-```Bash
-curl https://rubinjam.herokuapp.com/pack/pru > pru && chmod +x pru
-./pru -v
-```
-
-
-Introduction
-============
-pru works on input lines and offers easy mapping and reducing.
-
-
-## Map
-
-Map works on each line as String.
-
-    something | pru <map>
-
-
-### Examples
+## Map - each line
 
     # count letters of each line
     ls -1 | pru size
@@ -38,14 +12,7 @@ Map works on each line as String.
     ls -1 | pru self
 
 
-## Reduce
-
-Reduce works on all lines as Array.
-
-    something | pru -r <reduce>
-    something | pru --reduce <reduce>
-
-### Examples
+## Reduce - all lines as Array
 
     # count lines
     ls -1 | pru -r size
@@ -59,29 +26,23 @@ Reduce works on all lines as Array.
 
 ## Map and Reduce
 
-    something | pru <map> <reduce>
-
-
-### Examples
-
     # count letters in each line, then sum
     ls -1 | pru size sum
 
     # select lines longer than 5 letters, then join with commas
     ls -1 | pru 'size > 5' 'join(",")'
 
-    # passthrough
-    ls -1 | pru self self
+## Install
 
+```Bash
+gem install pru
+```
 
-Usage
-=====
-
-    something | pru <map>
-    something | pru <map> <reduce>
-    something | pru '' <reduce>
-    something | pru -r <reduce>
-    something | pru --reduce <reduce>
+or standalone
+```Bash
+curl https://rubinjam.herokuapp.com/pack/pru > pru && chmod +x pru
+./pru -v
+```
 
 ## Options
 
@@ -95,7 +56,7 @@ Usage
     -v, --version                    Show Version
 
 
-### Examples
+## Examples
 
     # grep --- all lines including foo
     ls -al | grep foo
