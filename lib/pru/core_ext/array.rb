@@ -22,10 +22,4 @@ class Array
   def counted
     grouped.sort_by{|d, f| -1 * f.size }.map{|d, f| "#{d} : #{f.size}" }
   end unless method_defined?(:counted)
-
-  def group_by
-    hash = {}
-    each { |x| hash[yield(x)] = x }
-    hash
-  end unless method_defined?(:group_by)
 end

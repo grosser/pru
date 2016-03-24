@@ -80,7 +80,7 @@ describe Pru do
     end
 
     it "can counted" do
-      `cat spec/test.txt | ./bin/pru -r 'counted'`.should == "abc : 2\n12 : 1\nabcdef : 1\n1200 : 1\n"
+      `cat spec/test.txt | ./bin/pru -r 'sort.counted'`.should == "abc : 2\n12 : 1\n1200 : 1\nabcdef : 1\n"
     end
 
     it "can be cut ofg via head" do
@@ -139,6 +139,12 @@ describe Pru do
       File.open('xxx','w'){|f| f.write "abc\r\nab\r\na" }
       `./bin/pru --inplace-edit xxx size`.should == ''
       File.read('xxx').should == "3\r\n2\r\n1"
+    end
+
+    it "keeps trailing lines and empty lines" do
+      File.write("xxx", "\n\na\n\nb\n\n")
+      `./bin/pru --inplace-edit xxx self`.should == ''
+      File.read('xxx').should == "\n\na\n\nb\n\n"
     end
 
     it "modifies the file with reduce" do

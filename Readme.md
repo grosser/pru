@@ -121,9 +121,8 @@ Working with rvm / many gemsets -> only install once
     echo 'alias pru="rvm 1.9.2 exec pru"' >> ~/.bash_profile
 
 
-Authors
+[Contributors](http://github.com/grosser/pru/contributors)
 =======
-### [Contributors](http://github.com/grosser/pru/contributors)
  - [John Hobbs](http://github.com/jmhobbs)
  - [Vasiliy Ermolovich](http://github.com/nashby)
  - [Jens Wille](http://blackwinter.de)
@@ -131,4 +130,8 @@ Authors
 
 [Michael Grosser](http://grosser.it)<br/>
 michael@grosser.it<br/>
-Hereby placed under public domain, do what you want, just do not hold me accountable...
+License: MIT<br/>
+[![Build Status](https://travis-ci.org/grosser/pru.svg?branch=master)](https://travis-ci.org/grosser/pru)
+
+
+

@@ -1,39 +1,36 @@
 #!/usr/bin/env ruby
 require 'optparse'
 
-$LOAD_PATH << File.join(File.dirname(__FILE__), '..', 'lib')
+# enable local usage from cloned repo
+root = File.expand_path("../..", __FILE__)
+$LOAD_PATH << "#{root}/lib" if File.exist?("#{root}/Gemfile")
+
 require 'pru'
 
 usage = nil
 options = {}
 
 OptionParser.new do |opts|
-  opts.banner = <<BANNER
-Pipeable Ruby
+  opts.banner = <<-BANNER.gsub(/^    /, "")
+    Pipeable Ruby
 
-Use ruby in your pipes, forget about grep / sed / awk / wc ...
+    Use ruby in your pipes, forget about grep / sed / awk / wc ...
 
-Map works on each line as String
-Reduce works on all lines as Array (optional or via -r)
+    Map works on each line as String
+    Reduce works on all lines as Array (optional or via -r)
 
-Usage:
-    something | pru 'map'
-    something | pru 'map' 'reduce'
-    something | pru '' 'reduce'
-    something | pru --reduce 'reduce'
+    Usage:
+        something | pru 'map'
+        something | pru 'map' 'reduce'
+        something | pru '' 'reduce'
+        something | pru --reduce 'reduce'
 
-Options:
-BANNER
+    Options:
+  BANNER
   opts.on("-r", "--reduce CODE","reduce via CODE") {|code| options[:reduce] = code }
   opts.separator ''
   opts.on('-I', '--libdir DIR', 'Add DIR to load path') { |dir| $LOAD_PATH << dir }
-  opts.on('--require LIB', 'Require LIB (also comma-separated)') { |lib|
-    begin
-      require 'rubygems'
-    rescue LoadError
-    end
-    lib.split(',').each{|l| require l }
-  }
+  opts.on('--require LIB', 'Require LIB (also comma-separated)') { |lib| lib.split(',').each{|l| require l } }
   opts.on('-i', '--inplace-edit FILE', 'Edit FILE inplace') { |file| options[:file] = file }
   opts.separator ''
   opts.on("-h", "--help","Show this.") { puts opts; exit }
@@ -41,7 +38,7 @@ BANNER
   usage = opts
 end.parse!
 
-if ARGV.empty? and options.empty? # no arguments -> show usage
+if ARGV.empty? && options.empty? # no arguments -> show usage
   puts usage
   exit
 end
@@ -50,28 +47,31 @@ abort "Too many arguments, see --help" if ARGV.size > 2
 
 map, reduce = ARGV
 reduce ||= options[:reduce]
-map = 'true' if not map or map.empty?
+map = 'true' if !map || map.empty?
 
 if options[:file]
   output_lines = []
   input = File.read(options[:file])
   newline = input[/\r\n|\r|\n/]
+  trailing_newline = (input =~ /#{newline}\Z/)
 else
   input = $stdin
 end
 
-collector = lambda{|line|
+collector = lambda do |line|
   output_lines ? output_lines << line : puts(line)
-}
+end
 
 if reduce
   results = []
-  Pru.map(input, map){|out| results << out }
+  Pru.map(input, map) { |out| results << out }
   collector.call Pru.reduce(results, reduce)
 else
-  Pru.map(input, map){|out| collector.call out }
+  Pru.map(input, map) { |out| collector.call out }
 end
 
 if options[:file]
-  File.open(options[:file], 'w'){|f| f.write output_lines.join(newline) }
+  content = output_lines.join(newline)
+  content << newline if trailing_newline
+  File.write options[:file], content
 end
