@@ -31,6 +31,10 @@ Pipeable Ruby - forget about grep / sed / awk / wc ... use pure, readable Ruby!
 
     # select lines longer than 5 letters, then join with commas
     ls -1 | pru 'size > 5' 'join(",")'
+    
+## Inplace edit
+
+    pru -i Gemfile 'sub /ruby/, "foo"'
 
 ## Install
 
