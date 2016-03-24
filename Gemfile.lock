@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    pru (0.1.8)
+    pru (0.2.0)
 
 GEM
   remote: https://rubygems.org/
@@ -26,3 +26,6 @@ DEPENDENCIES
   pru!
   rake
   rspec (~> 2)
+
+BUNDLED WITH
+   1.11.2
