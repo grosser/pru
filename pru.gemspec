@@ -10,4 +10,5 @@ Gem::Specification.new name, Pru::VERSION do |s|
   s.files = `git ls-files lib`.split("\n")
   s.license = "MIT"
   s.executables = ["pru"]
+  s.required_ruby_version = '>= 2.5' # must match lowest in .github/workflows/actions.yml
 end

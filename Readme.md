@@ -8,8 +8,8 @@ Pipeable Ruby - forget about grep / sed / awk / wc ... use pure, readable Ruby!
     # select lines longer than five letters
     ls -1 | pru 'size > 5'
 
-    # passthrough
-    ls -1 | pru self
+    # 2nd to last character
+    ls -1 | pru self[2..-1]
 
 
 ## Reduce - all lines as Array
@@ -20,8 +20,8 @@ Pipeable Ruby - forget about grep / sed / awk / wc ... use pure, readable Ruby!
     # are the more than five lines?
     ls -1 | pru -r 'size > 5'
 
-    # passthrough
-    ls -1 | pru -r self
+    # get 2nd to last line
+    ls -1 | pru -r self[2..-1]
 
 
 ## Map and Reduce
@@ -117,8 +117,8 @@ Gemsets
 Working with rvm / many gemsets -> only install once
 (or use standalone binary)
 
-    rvm 1.9.2 exec gem install pru
-    echo 'alias pru="rvm 1.9.2 exec pru"' >> ~/.bash_profile
+    rvm 2.7.7 exec gem install pru
+    echo 'alias pru="rvm 2.7.2 exec pru"' >> ~/.bash_profile
 
 
 [Contributors](http://github.com/grosser/pru/contributors)

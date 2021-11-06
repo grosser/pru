@@ -11,8 +11,8 @@ class Array
     end
   end unless method_defined?(:sum)
 
-  def mean(method = nil, &block)
-    sum(method, &block) / size.to_f
+  def mean(*args, &block)
+    sum(*args, &block) / size.to_f
   end unless method_defined?(:mean)
 
   def grouped
