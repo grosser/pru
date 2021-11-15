@@ -1,4 +1,5 @@
-require File.expand_path('spec/spec_helper')
+require 'spec_helper'
+require 'tempfile'
 
 describe Pru do
   it "has a VERSION" do
@@ -7,6 +8,10 @@ describe Pru do
 
   it "shows help when no arguments are given" do
     `./bin/pru`.should include('Usage:')
+  end
+
+  it 'shows -v' do
+    `./bin/pru -v`.should == "#{Pru::VERSION}\n"
   end
 
   describe 'map' do
@@ -52,9 +57,16 @@ describe Pru do
       results.uniq.size.should == 2 # called at a different time -> parses as you go
     end
 
-    it "can be cut of via head" do
-      `ls -l | ./bin/pru size | head -1 2>&1`.should == "8\n"
-      $?.success?.should == true
+    it "can be cut off via head" do
+      Tempfile.create do |e|
+        Tempfile.create do |f|
+          f.write "hello\n" * 10000 # need 10k for it to hit exception
+          f.close
+          `cat #{f.path} | ./bin/pru size 2>#{e.path} | head -1`.should == "5\n"
+          $?.success?.should == true
+          File.read(e).should == ""
+        end
+      end
     end
   end
 
@@ -98,10 +110,6 @@ describe Pru do
     it "selects with empty string and reduces" do
       `cat spec/test.txt | ./bin/pru '' 'size'`.should == "5\n"
     end
-  end
-
-  it 'shows -v' do
-    `./bin/pru -v`.should == "#{Pru::VERSION}\n"
   end
 
   describe '-I / --libdir' do

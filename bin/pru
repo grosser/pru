@@ -59,7 +59,15 @@ else
 end
 
 collector = lambda do |line|
-  output_lines ? output_lines << line : puts(line)
+  if output_lines
+    output_lines << line
+  else
+    begin
+      puts(line)
+    rescue Errno::EPIPE
+      exit 0
+    end
+  end
 end
 
 if reduce
