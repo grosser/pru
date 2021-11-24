@@ -11,7 +11,7 @@ jobs:
       BUNDLE_DEPLOYMENT: "false" # do not fail test when bumping release without bundling
     strategy:
       matrix:
-        ruby: [ '2.5', '2.6', '2.7', '3.0' ] # lowest must match ruby version in gemspec
+        ruby: [ '2.5', '2.6', '2.7', '3.0', truffleruby-head ] # lowest must match ruby version in gemspec
         task: [ 'default' ]
     name: ${{ matrix.ruby }} rake ${{ matrix.task }}
     steps:
