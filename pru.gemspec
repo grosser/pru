@@ -10,5 +10,6 @@ Gem::Specification.new name, Pru::VERSION do |s|
   s.files = `git ls-files lib`.split("\n")
   s.license = "MIT"
   s.executables = ["pru"]
-  s.required_ruby_version = '>= 2.5' # must match lowest in .github/workflows/actions.yml
+  # 2.6 because that is sadly what is available by default on macs
+  s.required_ruby_version = '>= 2.6' # must match lowest in .github/workflows/actions.yml
 end
