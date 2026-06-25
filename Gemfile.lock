@@ -19,6 +19,7 @@ GEM
     rspec-mocks (2.99.4)
 
 PLATFORMS
+  arm64-darwin-25
   x86_64-darwin-19
   x86_64-linux
 
