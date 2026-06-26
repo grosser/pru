@@ -7,10 +7,9 @@ $LOAD_PATH << "#{root}/lib" if File.exist?("#{root}/Gemfile")
 
 require 'pru'
 
-usage = nil
 options = {}
 
-OptionParser.new do |opts|
+parser = OptionParser.new do |opts|
   opts.banner = <<-BANNER.gsub(/^    /, "")
     Pipeable Ruby
 
@@ -37,15 +36,19 @@ OptionParser.new do |opts|
   opts.separator ''
   opts.on("-h", "--help","Show this.") { puts opts; exit }
   opts.on('-v', '--version','Show Version'){ require 'pru/version'; puts Pru::VERSION; exit}
-  usage = opts
-end.parse!
+end
+parser.parse!
 
-if ARGV.empty? && options.empty? # no arguments -> show usage
-  puts usage
+# no arguments -> show usage
+if ARGV.empty? && options.empty?
+  puts parser
   exit
 end
 
-abort "Too many arguments, see --help" if ARGV.size > 2
+# bad arguments -> fail
+if ARGV.size > 2
+  abort "Too many arguments, see --help"
+end
 
 map, reduce = ARGV
 reduce ||= options[:reduce]
