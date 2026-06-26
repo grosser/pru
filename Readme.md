@@ -49,7 +49,7 @@ plainly so it pipes nicely into other tools.
 
 ## Kubernetes - each item
 
-Like `--json`, but if the first value has an `"items"` key (as `kubectl ... -o json`
+Like `--json`, but if the value has an `"items"` key (as `kubectl ... -o json`
 returns) its elements are iterated instead.
 
     # list pod names

@@ -21,18 +21,16 @@ module Pru
       array.instance_exec(&compile(code))
     end
 
-    # Yield items from a JSON stream. In k8s mode, if the first value has an
+    # Yield items from a JSON stream. In k8s mode, if the value has an
     # "items" key (e.g. `kubectl get ... -o json`) its elements are yielded instead.
     def each_json_item(io, k8s: false)
       return enum_for(:each_json_item, io, k8s: k8s) unless block_given?
-      first = true
       each_json(io) do |item|
-        if k8s && first && item.is_a?(Hash) && item.key?("items")
+        if k8s && item.is_a?(Hash) && item.key?("items")
           item.fetch("items").each { |i| yield i }
         else
           yield item
         end
-        first = false
       end
     end
 
@@ -44,8 +42,8 @@ module Pru
 
     # Parse a stream of concatenated JSON values (newline-delimited or multiline)
     # by accumulating lines until the buffer forms a complete value.
+    # TODO: this is not very efficient, but keeping track of opening/closing braces might be ugly too
     def each_json(io)
-      require 'json'
       buffer = +""
       io.each_line do |line|
         buffer << line
