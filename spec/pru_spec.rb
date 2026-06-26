@@ -6,8 +6,9 @@ describe Pru do
     Pru::VERSION.should =~ /^\d+\.\d+\.\d+$/
   end
 
-  it "shows help when no arguments are given" do
-    `./bin/pru`.should include('Usage:')
+  it "shows usage and fails when no arguments are given" do
+    `./bin/pru 2>&1`.should include('Usage:')
+    $?.success?.should == false
   end
 
   it 'shows -v' do
@@ -109,6 +110,11 @@ describe Pru do
   describe 'map and reduce' do
     it "selects with empty string and reduces" do
       `cat spec/test.txt | ./bin/pru '' 'size'`.should == "5\n"
+    end
+
+    it "fails when combining a reduce argument with --reduce" do
+      `echo x | ./bin/pru self size --reduce size 2>&1`.should include("Cannot combine a reduce argument with --reduce")
+      $?.success?.should == false
     end
   end
 
