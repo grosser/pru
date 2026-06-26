@@ -150,6 +150,15 @@ describe Pru do
     it "pretty-prints array reduce results" do
       `printf '{"a":1}\n{"a":2}\n' | ./bin/pru --json '' 'map { |h| h["a"] }'`.should == "[\n  1,\n  2\n]\n"
     end
+
+    it "works with inplace-edit" do
+      Tempfile.create do |f|
+        f.write "{\"a\":1}\n{\"a\":2}\n"
+        f.close
+        `./bin/pru --inplace-edit #{f.path} --json 'self["a"]'`.should == ''
+        File.read(f.path).should == "1\n2\n"
+      end
+    end
   end
 
   describe '--k8s' do
@@ -195,6 +204,11 @@ describe Pru do
 
     it "fails with empty file" do
       `./bin/pru --inplace-edit xxx size 2>&1`.sub(' @ rb_sysopen', '').should include('No such file or directory - xxx')
+    end
+
+    it "fails when no code is given" do
+      `./bin/pru --inplace-edit xxx 2>&1`.should include('No code given for --inplace-edit')
+      $?.success?.should == false
     end
 
     it "keeps line separators when modifying" do

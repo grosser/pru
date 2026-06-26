@@ -39,17 +39,18 @@ parser = OptionParser.new do |opts|
 end
 parser.parse!
 
-# no arguments -> show usage and fail
+# bad arguments -> fail
 if ARGV.empty? && options.empty?
   abort parser.to_s
 end
-
-# bad arguments -> fail
 if ARGV.size > 2
   abort "Too many arguments, see --help"
 end
 if ARGV.size == 2 && options[:reduce]
   abort "Cannot combine a reduce argument with --reduce, see --help"
+end
+if options[:file] && ARGV.empty? && !options[:reduce]
+  abort "No code given for --inplace-edit, see --help"
 end
 
 map, reduce = ARGV
