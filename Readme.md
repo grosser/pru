@@ -49,8 +49,7 @@ plainly so it pipes nicely into other tools.
 
 ## Kubernetes - each item
 
-Like `--json`, but if the value has an `"items"` key (as `kubectl ... -o json`
-returns) its elements are iterated instead.
+Like `--json`, but iterates `"items"` key (as `kubectl ... -o json` returns).
 
     # list pod names
     kubectl get pods -A -o json | pru --k8s 'dig("metadata", "name")'

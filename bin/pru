@@ -57,6 +57,7 @@ map, reduce = ARGV
 reduce ||= options[:reduce]
 map = 'true' if !map || map.empty?
 
+# reading from file or stdin ?
 if options[:file]
   output_lines = []
   input = File.read(options[:file])
@@ -66,9 +67,9 @@ else
   input = $stdin
 end
 
-# dump write as JSON ?
+# output as JSON ?
 if options[:json]
-  require 'json'
+  require 'json' # also used by --k8s, which sets :json
   output_format = lambda do |out|
     case out
     when Hash, Array then JSON.pretty_generate(out)
@@ -77,6 +78,7 @@ if options[:json]
   end
 end
 
+# collect results into list or print them
 collector = lambda do |line|
   line = output_format.call(line) if output_format
   if output_lines
@@ -90,9 +92,15 @@ collector = lambda do |line|
   end
 end
 
-items = if options[:json]
-  Pru.json_items(input, k8s: options[:k8s])
+# find all items (ideally lazy so we can stream)
+items = if options[:k8s]
+  # single document (e.g. `kubectl get ... -o json`) -> parse once and iterate its items
+  JSON.parse(input.read).fetch("items")
+elsif options[:json]
+  # lazy stream of JSON values
+  Pru.each_json(input)
 else
+  # plain lines, chomped, lazily so streaming/head still work
   input.each_line.lazy.map { |line| line.chomp }
 end
 
@@ -104,6 +112,7 @@ else
   Pru.map(items, map) { |out| collector.call out }
 end
 
+# write back to file if requested
 if options[:file]
   content = output_lines.join(newline)
   content << newline if trailing_newline

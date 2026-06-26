@@ -166,8 +166,9 @@ describe Pru do
       `printf '{"items":[{"metadata":{"name":"a"}},{"metadata":{"name":"b"}}]}\n' | ./bin/pru --k8s 'dig("metadata", "name")'`.should == "a\nb\n"
     end
 
-    it "behaves like --json when there is no items key" do
-      `printf '{"metadata":{"name":"solo"}}\n' | ./bin/pru --k8s 'dig("metadata", "name")'`.should == "solo\n"
+    it "fails when there is no items key" do
+      `printf '{"metadata":{"name":"solo"}}\n' | ./bin/pru --k8s 'dig("metadata", "name")' 2>&1`.should include("key not found")
+      $?.success?.should == false
     end
 
     it "reduces over the items" do
