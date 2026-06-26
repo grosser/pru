@@ -28,6 +28,7 @@ OptionParser.new do |opts|
     Options:
   BANNER
   opts.on("-r", "--reduce CODE","reduce via CODE") {|code| options[:reduce] = code }
+  opts.on("-j", "--json","Parse input as a JSON stream, each value is an item") { options[:json] = true }
   opts.separator ''
   opts.on('-I', '--libdir DIR', 'Add DIR to load path') { |dir| $LOAD_PATH << dir }
   opts.on('--require LIB', 'Require LIB (also comma-separated)') { |lib| lib.split(',').each{|l| require l } }
@@ -58,7 +59,18 @@ else
   input = $stdin
 end
 
+if options[:json]
+  require 'json'
+  format = lambda do |out|
+    case out
+    when Hash, Array then JSON.pretty_generate(out)
+    else out
+    end
+  end
+end
+
 collector = lambda do |line|
+  line = format.call(line) if format
   if output_lines
     output_lines << line
   else
@@ -70,7 +82,15 @@ collector = lambda do |line|
   end
 end
 
-if reduce
+if options[:json]
+  if reduce
+    results = []
+    Pru.json_map(input, map) { |out| results << out }
+    collector.call Pru.json_reduce(results, reduce)
+  else
+    Pru.json_map(input, map) { |out| collector.call out }
+  end
+elsif reduce
   results = []
   Pru.map(input, map) { |out| results << out }
   collector.call Pru.reduce(results, reduce)

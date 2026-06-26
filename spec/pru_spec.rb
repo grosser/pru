@@ -112,6 +112,40 @@ describe Pru do
     end
   end
 
+  describe '--json' do
+    it "pretty-prints hashes" do
+      `printf '{"a":1}\n' | ./bin/pru --json`.should == "{\n  \"a\": 1\n}\n"
+    end
+
+    it "parses multiple values from one line" do
+      `printf '{"a":1}\n{"b":2}\n' | ./bin/pru --json 'keys.first'`.should == "a\nb\n"
+    end
+
+    it "parses values spanning multiple lines" do
+      `printf '{\n  "a": 1\n}\n' | ./bin/pru --json 'self["a"]'`.should == "1\n"
+    end
+
+    it "outputs strings plainly without quotes" do
+      `printf '{"a":"foo"}\n' | ./bin/pru --json 'self["a"]'`.should == "foo\n"
+    end
+
+    it "outputs numbers plainly" do
+      `printf '{"a":1}\n{"a":2}\n' | ./bin/pru --json 'self["a"]'`.should == "1\n2\n"
+    end
+
+    it "selects via true" do
+      `printf '{"n":1}\n{"n":5}\n' | ./bin/pru --json 'self["n"] > 3'`.should == "{\n  \"n\": 5\n}\n"
+    end
+
+    it "reduces" do
+      `printf '{"a":1}\n{"a":2}\n' | ./bin/pru --json 'self["a"]' 'sum'`.should == "3\n"
+    end
+
+    it "pretty-prints array reduce results" do
+      `printf '{"a":1}\n{"a":2}\n' | ./bin/pru --json '' 'map { |h| h["a"] }'`.should == "[\n  1,\n  2\n]\n"
+    end
+  end
+
   describe '-I / --libdir' do
     it "adds a folder to the load-path" do
       `echo 1 | ./bin/pru -I spec --reduce 'require "a_test"; ATest.to_s'`.should == "ATest\n"
