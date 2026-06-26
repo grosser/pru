@@ -7,10 +7,9 @@ $LOAD_PATH << "#{root}/lib" if File.exist?("#{root}/Gemfile")
 
 require 'pru'
 
-usage = nil
 options = {}
 
-OptionParser.new do |opts|
+parser = OptionParser.new do |opts|
   opts.banner = <<-BANNER.gsub(/^    /, "")
     Pipeable Ruby
 
@@ -28,6 +27,8 @@ OptionParser.new do |opts|
     Options:
   BANNER
   opts.on("-r", "--reduce CODE","reduce via CODE") {|code| options[:reduce] = code }
+  opts.on("-j", "--json","Parse input as a JSON stream, each value is an item") { options[:json] = true }
+  opts.on("-k", "--k8s","Like --json, but iterate the \"items\" array if present (kubectl -o json)") { options[:json] = true; options[:k8s] = true }
   opts.separator ''
   opts.on('-I', '--libdir DIR', 'Add DIR to load path') { |dir| $LOAD_PATH << dir }
   opts.on('--require LIB', 'Require LIB (also comma-separated)') { |lib| lib.split(',').each{|l| require l } }
@@ -35,30 +36,51 @@ OptionParser.new do |opts|
   opts.separator ''
   opts.on("-h", "--help","Show this.") { puts opts; exit }
   opts.on('-v', '--version','Show Version'){ require 'pru/version'; puts Pru::VERSION; exit}
-  usage = opts
-end.parse!
-
-if ARGV.empty? && options.empty? # no arguments -> show usage
-  puts usage
-  exit
 end
+parser.parse!
 
-abort "Too many arguments, see --help" if ARGV.size > 2
+# bad arguments -> fail
+if ARGV.empty? && options.empty?
+  abort parser.to_s
+end
+if ARGV.size > 2
+  abort "Too many arguments, see --help"
+end
+if ARGV.size == 2 && options[:reduce]
+  abort "Cannot combine a reduce argument with --reduce, see --help"
+end
+if options[:file] && ARGV.empty? && !options[:reduce]
+  abort "No code given for --inplace-edit, see --help"
+end
 
 map, reduce = ARGV
 reduce ||= options[:reduce]
 map = 'true' if !map || map.empty?
 
+# reading from file or stdin ?
 if options[:file]
   output_lines = []
   input = File.read(options[:file])
   newline = input[/\r\n|\r|\n/]
-  trailing_newline = (input =~ /#{newline}\Z/)
+  trailing_newline = (newline && input.end_with?(newline))
 else
   input = $stdin
 end
 
+# output as JSON ?
+if options[:json]
+  require 'json' # also used by --k8s, which sets :json
+  output_format = lambda do |out|
+    case out
+    when Hash, Array then JSON.pretty_generate(out)
+    else out
+    end
+  end
+end
+
+# collect results into list or print them
 collector = lambda do |line|
+  line = output_format.call(line) if output_format
   if output_lines
     output_lines << line
   else
@@ -70,14 +92,27 @@ collector = lambda do |line|
   end
 end
 
-if reduce
-  results = []
-  Pru.map(input, map) { |out| results << out }
-  collector.call Pru.reduce(results, reduce)
+# find all items (ideally lazy so we can stream)
+items = if options[:k8s]
+  # single document (e.g. `kubectl get ... -o json`) -> parse once and iterate its items
+  JSON.parse(input.read).fetch("items")
+elsif options[:json]
+  # lazy stream of JSON values
+  Pru.each_json(input)
 else
-  Pru.map(input, map) { |out| collector.call out }
+  # plain lines, chomped, lazily so streaming/head still work
+  input.each_line.lazy.map { |line| line.chomp }
 end
 
+if reduce
+  results = []
+  Pru.map(items, map) { |out| results << out }
+  collector.call Pru.reduce(results, reduce)
+else
+  Pru.map(items, map) { |out| collector.call out }
+end
+
+# write back to file if requested
 if options[:file]
   content = output_lines.join(newline)
   content << newline if trailing_newline

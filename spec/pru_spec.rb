@@ -6,8 +6,9 @@ describe Pru do
     Pru::VERSION.should =~ /^\d+\.\d+\.\d+$/
   end
 
-  it "shows help when no arguments are given" do
-    `./bin/pru`.should include('Usage:')
+  it "shows usage and fails when no arguments are given" do
+    `./bin/pru 2>&1`.should include('Usage:')
+    $?.success?.should == false
   end
 
   it 'shows -v' do
@@ -110,6 +111,69 @@ describe Pru do
     it "selects with empty string and reduces" do
       `cat spec/test.txt | ./bin/pru '' 'size'`.should == "5\n"
     end
+
+    it "fails when combining a reduce argument with --reduce" do
+      `echo x | ./bin/pru self size --reduce size 2>&1`.should include("Cannot combine a reduce argument with --reduce")
+      $?.success?.should == false
+    end
+  end
+
+  describe '--json' do
+    it "pretty-prints hashes" do
+      `printf '{"a":1}\n' | ./bin/pru --json`.should == "{\n  \"a\": 1\n}\n"
+    end
+
+    it "parses multiple values from one line" do
+      `printf '{"a":1}\n{"b":2}\n' | ./bin/pru --json 'keys.first'`.should == "a\nb\n"
+    end
+
+    it "parses values spanning multiple lines" do
+      `printf '{\n  "a": 1\n}\n' | ./bin/pru --json 'self["a"]'`.should == "1\n"
+    end
+
+    it "outputs strings plainly without quotes" do
+      `printf '{"a":"foo"}\n' | ./bin/pru --json 'self["a"]'`.should == "foo\n"
+    end
+
+    it "outputs numbers plainly" do
+      `printf '{"a":1}\n{"a":2}\n' | ./bin/pru --json 'self["a"]'`.should == "1\n2\n"
+    end
+
+    it "selects via true" do
+      `printf '{"n":1}\n{"n":5}\n' | ./bin/pru --json 'self["n"] > 3'`.should == "{\n  \"n\": 5\n}\n"
+    end
+
+    it "reduces" do
+      `printf '{"a":1}\n{"a":2}\n' | ./bin/pru --json 'self["a"]' 'sum'`.should == "3\n"
+    end
+
+    it "pretty-prints array reduce results" do
+      `printf '{"a":1}\n{"a":2}\n' | ./bin/pru --json '' 'map { |h| h["a"] }'`.should == "[\n  1,\n  2\n]\n"
+    end
+
+    it "works with inplace-edit" do
+      Tempfile.create do |f|
+        f.write "{\"a\":1}\n{\"a\":2}\n"
+        f.close
+        `./bin/pru --inplace-edit #{f.path} --json 'self["a"]'`.should == ''
+        File.read(f.path).should == "1\n2\n"
+      end
+    end
+  end
+
+  describe '--k8s' do
+    it "iterates the items array" do
+      `printf '{"items":[{"metadata":{"name":"a"}},{"metadata":{"name":"b"}}]}\n' | ./bin/pru --k8s 'dig("metadata", "name")'`.should == "a\nb\n"
+    end
+
+    it "fails when there is no items key" do
+      `printf '{"metadata":{"name":"solo"}}\n' | ./bin/pru --k8s 'dig("metadata", "name")' 2>&1`.should include("key not found")
+      $?.success?.should == false
+    end
+
+    it "reduces over the items" do
+      `printf '{"items":[{"metadata":{"name":"a"}},{"metadata":{"name":"b"}}]}\n' | ./bin/pru --k8s 'dig("metadata", "name")' 'size'`.should == "2\n"
+    end
   end
 
   describe '-I / --libdir' do
@@ -141,6 +205,11 @@ describe Pru do
 
     it "fails with empty file" do
       `./bin/pru --inplace-edit xxx size 2>&1`.sub(' @ rb_sysopen', '').should include('No such file or directory - xxx')
+    end
+
+    it "fails when no code is given" do
+      `./bin/pru --inplace-edit xxx 2>&1`.should include('No code given for --inplace-edit')
+      $?.success?.should == false
     end
 
     it "keeps line separators when modifying" do
