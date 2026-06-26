@@ -90,20 +90,18 @@ collector = lambda do |line|
   end
 end
 
-if options[:json]
-  if reduce
-    results = []
-    Pru.json_map(input, map, k8s: options[:k8s]) { |out| results << out }
-    collector.call Pru.json_reduce(results, reduce)
-  else
-    Pru.json_map(input, map, k8s: options[:k8s]) { |out| collector.call out }
-  end
-elsif reduce
+items = if options[:json]
+  Pru.each_json_item(input, k8s: options[:k8s])
+else
+  input.each_line.lazy.map { |line| line.chomp }
+end
+
+if reduce
   results = []
-  Pru.map(input, map) { |out| results << out }
+  Pru.map(items, map) { |out| results << out }
   collector.call Pru.reduce(results, reduce)
 else
-  Pru.map(input, map) { |out| collector.call out }
+  Pru.map(items, map) { |out| collector.call out }
 end
 
 if options[:file]

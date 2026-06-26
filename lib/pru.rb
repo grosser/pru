@@ -2,63 +2,29 @@ require 'pru/core_ext/array'
 
 module Pru
   class << self
-    def map(io, code)
-      String.class_eval <<-RUBY, __FILE__, __LINE__ + 1
-        def _pru(i)
-          #{code}
-        end
-      RUBY
-
+    def map(items, code)
+      block = compile(code)
       i = 0
-      io.each_line do |line|
+      items.each do |item|
         i += 1
-        line.chomp!
-        result = line._pru(i) or next
+        result = item.instance_exec(i, &block) || next
 
         case result
-        when true then yield line
-        when Regexp then yield line if line =~ result
+        when true then yield item
+        when Regexp then yield item if item =~ result
         else yield result
         end
       end
     end
 
     def reduce(array, code)
-      Array.class_eval <<-RUBY, __FILE__, __LINE__ + 1
-        def _pru
-          #{code}
-        end
-      RUBY
-      array._pru
-    end
-
-    def json_map(io, code, k8s: false)
-      block = compile(code)
-      i = 0
-      each_item(io, k8s) do |item|
-        i += 1
-        result = item.instance_exec(i, &block) or next
-
-        case result
-        when true then yield item
-        else yield result
-        end
-      end
-    end
-
-    def json_reduce(array, code)
       array.instance_exec(&compile(code))
-    end
-
-    private
-
-    def compile(code)
-      eval("proc { |i| #{code} }", TOPLEVEL_BINDING, __FILE__, __LINE__)
     end
 
     # Yield items from a JSON stream. In k8s mode, if the first value has an
     # "items" key (e.g. `kubectl get ... -o json`) its elements are yielded instead.
-    def each_item(io, k8s)
+    def each_json_item(io, k8s: false)
+      return enum_for(:each_json_item, io, k8s: k8s) unless block_given?
       first = true
       each_json(io) do |item|
         if k8s && first && item.is_a?(Hash) && item.key?("items")
@@ -68,6 +34,12 @@ module Pru
         end
         first = false
       end
+    end
+
+    private
+
+    def compile(code)
+      eval("proc { |i| #{code} }", TOPLEVEL_BINDING, __FILE__, __LINE__)
     end
 
     # Parse a stream of concatenated JSON values (newline-delimited or multiline)
