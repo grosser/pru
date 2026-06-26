@@ -21,15 +21,16 @@ module Pru
       array.instance_exec(&compile(code))
     end
 
-    # Yield items from a JSON stream. In k8s mode, if the value has an
-    # "items" key (e.g. `kubectl get ... -o json`) its elements are yielded instead.
-    def each_json_item(io, k8s: false)
-      return enum_for(:each_json_item, io, k8s: k8s) unless block_given?
-      each_json(io) do |item|
-        if k8s && item.is_a?(Hash) && item.key?("items")
-          item.fetch("items").each { |i| yield i }
-        else
-          yield item
+    # An enumerable of items parsed from a JSON stream. In k8s mode, if a value
+    # has an "items" key (e.g. `kubectl get ... -o json`) its elements are the items instead.
+    def json_items(io, k8s: false)
+      Enumerator.new do |yielder|
+        each_json(io) do |item|
+          if k8s && item.is_a?(Hash) && item.key?("items")
+            item.fetch("items").each { |i| yielder << i }
+          else
+            yielder << item
+          end
         end
       end
     end

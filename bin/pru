@@ -91,7 +91,7 @@ collector = lambda do |line|
 end
 
 items = if options[:json]
-  Pru.each_json_item(input, k8s: options[:k8s])
+  Pru.json_items(input, k8s: options[:k8s])
 else
   input.each_line.lazy.map { |line| line.chomp }
 end
