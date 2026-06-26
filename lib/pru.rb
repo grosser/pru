@@ -32,10 +32,10 @@ module Pru
       array._pru
     end
 
-    def json_map(io, code)
+    def json_map(io, code, k8s: false)
       block = compile(code)
       i = 0
-      each_json(io) do |item|
+      each_item(io, k8s) do |item|
         i += 1
         result = item.instance_exec(i, &block) or next
 
@@ -54,6 +54,20 @@ module Pru
 
     def compile(code)
       eval("proc { |i| #{code} }", TOPLEVEL_BINDING, __FILE__, __LINE__)
+    end
+
+    # Yield items from a JSON stream. In k8s mode, if the first value has an
+    # "items" key (e.g. `kubectl get ... -o json`) its elements are yielded instead.
+    def each_item(io, k8s)
+      first = true
+      each_json(io) do |item|
+        if k8s && first && item.is_a?(Hash) && item.key?("items")
+          item.fetch("items").each { |i| yield i }
+        else
+          yield item
+        end
+        first = false
+      end
     end
 
     # Parse a stream of concatenated JSON values (newline-delimited or multiline)

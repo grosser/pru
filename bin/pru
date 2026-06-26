@@ -29,6 +29,7 @@ OptionParser.new do |opts|
   BANNER
   opts.on("-r", "--reduce CODE","reduce via CODE") {|code| options[:reduce] = code }
   opts.on("-j", "--json","Parse input as a JSON stream, each value is an item") { options[:json] = true }
+  opts.on("-k", "--k8s","Like --json, but iterate the \"items\" array if present (kubectl -o json)") { options[:json] = true; options[:k8s] = true }
   opts.separator ''
   opts.on('-I', '--libdir DIR', 'Add DIR to load path') { |dir| $LOAD_PATH << dir }
   opts.on('--require LIB', 'Require LIB (also comma-separated)') { |lib| lib.split(',').each{|l| require l } }
@@ -85,10 +86,10 @@ end
 if options[:json]
   if reduce
     results = []
-    Pru.json_map(input, map) { |out| results << out }
+    Pru.json_map(input, map, k8s: options[:k8s]) { |out| results << out }
     collector.call Pru.json_reduce(results, reduce)
   else
-    Pru.json_map(input, map) { |out| collector.call out }
+    Pru.json_map(input, map, k8s: options[:k8s]) { |out| collector.call out }
   end
 elsif reduce
   results = []

@@ -47,6 +47,14 @@ plainly so it pipes nicely into other tools.
     # map then reduce
     printf '{"a":1}\n{"a":2}\n' | pru --json 'self["a"]' 'sum'
 
+## Kubernetes - each item
+
+Like `--json`, but if the first value has an `"items"` key (as `kubectl ... -o json`
+returns) its elements are iterated instead.
+
+    # list pod names
+    kubectl get pods -A -o json | pru --k8s 'dig("metadata", "name")'
+
 ## Inplace edit
 
     pru -i Gemfile 'sub /ruby/, "foo"'
@@ -67,6 +75,7 @@ curl https://rubinjam.herokuapp.com/pack/pru > pru && chmod +x pru
 
     -r, --reduce CODE                reduce via CODE
     -j, --json                       Parse input as a JSON stream, each value is an item
+    -k, --k8s                        Like --json, but iterate the "items" array if present (kubectl -o json)
 
     -I, --libdir DIR                 Add DIR to load path
         --require LIB                Require LIB (also comma-separated)

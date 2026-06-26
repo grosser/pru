@@ -146,6 +146,20 @@ describe Pru do
     end
   end
 
+  describe '--k8s' do
+    it "iterates the items array" do
+      `printf '{"items":[{"metadata":{"name":"a"}},{"metadata":{"name":"b"}}]}\n' | ./bin/pru --k8s 'dig("metadata", "name")'`.should == "a\nb\n"
+    end
+
+    it "behaves like --json when there is no items key" do
+      `printf '{"metadata":{"name":"solo"}}\n' | ./bin/pru --k8s 'dig("metadata", "name")'`.should == "solo\n"
+    end
+
+    it "reduces over the items" do
+      `printf '{"items":[{"metadata":{"name":"a"}},{"metadata":{"name":"b"}}]}\n' | ./bin/pru --k8s 'dig("metadata", "name")' 'size'`.should == "2\n"
+    end
+  end
+
   describe '-I / --libdir' do
     it "adds a folder to the load-path" do
       `echo 1 | ./bin/pru -I spec --reduce 'require "a_test"; ATest.to_s'`.should == "ATest\n"
