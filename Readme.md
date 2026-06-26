@@ -136,17 +136,19 @@ curl https://rubinjam.herokuapp.com/pack/pru > pru && chmod +x pru
     ls -al | ruby -npe 'next unless $_.split(" ")[1].to_i > 3'
     ls -al | pru 'split(" ")[1].to_i > 3'
 
-Gemsets
-=======
-Working with rvm / many gemsets -> only install once
+## Multiple ruby versions
+Working with rvm / mise / rbenv -> only install once
 (or use standalone binary)
 
     rvm 2.7.7 exec gem install pru
     echo 'alias pru="rvm 2.7.2 exec pru"' >> ~/.bash_profile
 
+Alternatively use [rubinjam](https://github.com/grosser/rubinjam) to make it a standalone binary.
 
-[Contributors](http://github.com/grosser/pru/contributors)
-=======
+    curl -sSfL https://rubinjam.onrender.com/pack/pru > pru && chmod +x pru
+    ./pru --version
+
+## [Contributors](http://github.com/grosser/pru/contributors)
  - [John Hobbs](http://github.com/jmhobbs)
  - [Vasiliy Ermolovich](http://github.com/nashby)
  - [Jens Wille](http://blackwinter.de)
