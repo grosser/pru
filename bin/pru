@@ -61,14 +61,15 @@ if options[:file]
   output_lines = []
   input = File.read(options[:file])
   newline = input[/\r\n|\r|\n/]
-  trailing_newline = (input =~ /#{newline}\Z/)
+  trailing_newline = (newline && input.end_with?(newline))
 else
   input = $stdin
 end
 
+# dump write as JSON ?
 if options[:json]
   require 'json'
-  format = lambda do |out|
+  output_format = lambda do |out|
     case out
     when Hash, Array then JSON.pretty_generate(out)
     else out
@@ -77,7 +78,7 @@ if options[:json]
 end
 
 collector = lambda do |line|
-  line = format.call(line) if format
+  line = output_format.call(line) if output_format
   if output_lines
     output_lines << line
   else
