@@ -24,12 +24,16 @@ module Pru
     # An enumerable of JSON values parsed from a stream (newline-delimited or multiline),
     # parsed lazily so we process as input arrives, by accumulating lines until the buffer
     # forms a complete value.
-    # TODO: this is not very efficient, but keeping track of opening/closing braces might be ugly too
     def each_json(io)
       Enumerator.new do |yielder|
         buffer = +""
         io.each_line do |line|
           buffer << line
+          # Only attempt a parse when the buffer could actually be complete: a JSON value's
+          # last significant character is always '}', ']', '"', a digit, or 'e'/'l'
+          # (true/false/null). Skipping impossible parses keeps a multi-line value O(n)
+          # instead of re-parsing the whole growing buffer on every line.
+          next unless /[}\]"\del]\z/.match?(buffer.rstrip)
           begin
             item = JSON.parse(buffer)
           rescue JSON::ParserError
